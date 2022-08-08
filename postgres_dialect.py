@@ -9,6 +9,6 @@ USER_EXISTS = """SELECT 1 FROM pg_roles WHERE rolname='{}'"""
 # Удаление пользователя
 DELETE_USER = """DROP USER IF EXISTS {}"""
 # Создание пользователя
-CREATE_USER = """CREATE USER {username} WITH PASSWORD '{password}'"""
+CREATE_USER = """CREATE USER {username} WITH CREATEDB PASSWORD '{password}'"""
 # Добавление пользователю прав на БД
 SET_USER_GRANT = """GRANT ALL PRIVILEGES ON DATABASE "{db}" to {username}"""

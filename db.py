@@ -104,6 +104,7 @@ def exec_postgres_file(conn, sql_file):
 
 def user_init(db_name):
     """Создание нового пользователя"""
+    # Создание пользователя от имени рута
     username = CLIENT_USERNAME
     if username is not None:
         res = click.prompt(
@@ -144,18 +145,18 @@ def db_init(sql_file, db_name):
         res = click.prompt(f"Эта процедура полностью удалит базу данных '{db_name}' и создаст новую. Вы согласны? [(д)а/(н)ет] >> ").lower()
         if res in ('да', 'д', 'yes', 'y'):
             click.echo('Удаляем старую БД, создаем и заполняем новую')
+            user_init(db_name)
             db_delete(db_name)
             db_create(db_name)
             sqlfile_execute(sql_file, db_name)
-            user_init(db_name)
         else:
             click.echo('Отмена инициализации БД')
             return
     else:
         click.echo('Создаем новую БД и заполняем ее данными')
+        user_init(db_name)
         db_create(db_name)
         sqlfile_execute(sql_file, db_name)
-        user_init(db_name)
     click.echo(f"Новая БД '{db_name}' создана")
 
 
@@ -166,4 +167,10 @@ if __name__ == '__main__':
     # print(conn)
     # print(user_exists('postgres'))
     # db_init()
+    # user_init(DB_NAME)
+    # user_delete(CLIENT_USERNAME)
+    # db_delete(DB_NAME)
+    # db_create('dj_estate_register')
+    # user_create('django_user')
+    # set_user_grant('django_user')
     user_init(DB_NAME)

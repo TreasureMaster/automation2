@@ -1,7 +1,7 @@
 # СУБД
 DBMS = 'postgres'
 # Основная БД
-DB_NAME = 'estate_register'
+DB_NAME = 'dj_estate_register'
 # SQL-скрипт заполнения БД
 SQL_INIT_FILE = 'temp/estate_register.sql'
 
@@ -16,7 +16,7 @@ ROOT_CONNECT = {
     **DB_URL,
 }
 # 2 параметра пользователя
-CLIENT_USERNAME = 'test_user'
+CLIENT_USERNAME = 'django_user'
 CLIENT_PASSWORD = 'pswd'
 
 USER_CONNECT = {
