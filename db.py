@@ -1,5 +1,4 @@
 import os
-import re
 
 import click
 import psycopg2
@@ -13,9 +12,6 @@ from config import (
     ROOT_CONNECT,
     USER_GRANT,
     CLIENT_USERNAME,
-    # USER_TEMPLATE,
-    # GRANT_TEMPLATE,
-    # USER_CONNECT,
 )
 from postgres_dialect import (
     DB_EXISTS,
@@ -26,7 +22,6 @@ from postgres_dialect import (
     CREATE_USER,
     SET_USER_GRANT,
 )
-# from models.config import USER_CONNECT
 
 
 def get_db(dbname=None, connect_info=None):
@@ -59,7 +54,6 @@ def user_create(username):
     """Создание пользователя"""
     conn = get_db()
     if not user_exists(username):
-    #     user_revoke(username)
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         with conn.cursor() as cursor:
             cursor.execute(CREATE_USER.format(**USER_GRANT))
@@ -68,7 +62,6 @@ def user_delete(username):
     """Удаление пользователя"""
     conn = get_db()
     if user_exists(username):
-    #     user_revoke(username)
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         with conn.cursor() as cursor:
             cursor.execute(DELETE_USER.format(username))
@@ -80,14 +73,6 @@ def set_user_grant(username):
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         with conn.cursor() as cursor:
             cursor.execute(SET_USER_GRANT.format(**USER_GRANT))
-
-# def user_revoke(username):
-#     """отзыв привилегий пользователя"""
-#     conn = get_db()
-#     # if user_exists(username):
-#     with conn.cursor() as cursor:
-#         # cursor.execute("""REVOKE ALL PRIVILEGES, GRANT OPTION FROM '{username}'@'localhost'; {}""".format(username))
-#         cursor.execute("""REVOKE ALL PRIVILEGES, GRANT OPTION FROM '{}'""".format(username))
 
 def db_create(db_name):
     """Создание БД"""
@@ -109,35 +94,13 @@ def sqlfile_execute(sql_file, db_name, **kwargs):
     """Заполнить БД из скрипта SQL"""
     conn = get_db(db_name)
     if os.path.exists(sql_file):
-        # with conn.cursor() as cursor:
         if DBMS == 'postgres':
             exec_postgres_file(conn, sql_file)
 
 def exec_postgres_file(conn, sql_file):
-    # conn = get_db(db_name)
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     with conn.cursor() as cursor:
         cursor.execute(open(sql_file, 'r', encoding='utf-8').read())
-
-    # MariaDB
-    # print ("\n[INFO] Executing SQL script file: '%s'" % (sql_file))
-    # statement = ""
-
-    # for line in open(sql_file, encoding='utf-8'):
-    #     line = line.format(**kwargs)
-    #     if re.match(r'--', line):
-    #         continue
-    #     if not re.search(r'[^-;]+;', line):
-    #         statement = statement + line
-    #     else:
-    #         statement = statement + line
-    #         #print "\n\n[DEBUG] Executing SQL statement:\n%s" % (statement)
-    #         try:
-    #             cursor.execute(statement)
-    #         except (mariadb.OperationalError, mariadb.ProgrammingError) as e:
-    #             print ("\n[WARN] MySQLError во время выполнения \n\tАргументы: '%s'" % (str(e.args)))
-
-    #         statement = ""
 
 def user_init(db_name):
     """Создание нового пользователя"""
@@ -164,12 +127,10 @@ def user_init(db_name):
                         "'{db_name}'? [(д)а/(н)ет] >> "
                     ).lower()
                     if res in ('да', 'д', 'yes', 'y'):
-                        # sqlfile_execute(GRANT_TEMPLATE, db_name, **USER_GRANT)
                         set_user_grant(username)
                     else:
                         click.echo('Отмена добавления прав новому пользователю')
                     return
-            # sqlfile_execute(USER_TEMPLATE, db_name, **USER_GRANT)
             user_create(username)
         else:
             click.echo('Отмена создания нового пользователя.')
