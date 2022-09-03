@@ -8,7 +8,9 @@ DELETE_DATABASE = """DROP DATABASE {}"""
 USER_EXISTS = """SELECT 1 FROM pg_roles WHERE rolname='{}'"""
 # Удаление пользователя
 DELETE_USER = """DROP USER IF EXISTS {}"""
+# Удаление пользователя с зависимостями
+DROP_RELATIONS = """DROP OWNED BY {}"""
 # Создание пользователя
-CREATE_USER = """CREATE USER {username} WITH CREATEDB PASSWORD '{password}'"""
+CREATE_USER = """CREATE USER {user} WITH CREATEDB PASSWORD '{password}'"""
 # Добавление пользователю прав на БД
-SET_USER_GRANT = """GRANT ALL PRIVILEGES ON DATABASE "{db}" to {username}"""
+SET_USER_GRANT = """GRANT ALL PRIVILEGES ON DATABASE "{dbname}" to {user}"""
