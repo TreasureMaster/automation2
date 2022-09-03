@@ -195,18 +195,12 @@ def sqlfile_execute(sql_file, db_name, **kwargs):
         conn = get_db(db_name)
         if os.path.exists(sql_file):
             if DBMS == 'postgres':
-                exec_postgres_file(conn, sql_file)
-                # with conn.cursor() as cursor:
-                #     cursor.execute(
-                #         open(sql_file, 'r', encoding='utf-8').read()
-                #     )
+                # conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+                with conn.cursor() as cursor:
+                    cursor.execute(
+                        open(sql_file, 'r', encoding='utf-8').read()
+                    )
 
-def exec_postgres_file(conn, sql_file):
-    """Заполнение из скрипта SQL для PostgreSQL"""
-    # Нужна ли изоляция ?
-    # conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-    with conn.cursor() as cursor:
-        cursor.execute(open(sql_file, 'r', encoding='utf-8').read())
 
 def user_init(db):
     """Создание нового пользователя"""
