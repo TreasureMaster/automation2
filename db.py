@@ -21,6 +21,7 @@ from config import (
 from postgres_dialect import (
     DB_EXISTS,
     CREATE_DATABASE,
+    CREATE_DATABASE_POSTGIS,
     DELETE_DATABASE,
     USER_EXISTS,
     DELETE_USER,
@@ -116,11 +117,13 @@ class BaseDB:
             exists = cursor.fetchone()
         return exists is not None
 
-    def create(self, dbname):
+    def create(self, dbname, is_postgis=False):
         """Создание БД"""
         if not self.exists(dbname):
             with self.connection.cursor() as cursor:
-                cursor.execute(CREATE_DATABASE.format(dbname))
+                cursor.execute((
+                    CREATE_DATABASE_POSTGIS if is_postgis else CREATE_DATABASE
+                ).format(dbname))
 
     # def recreate(self, dbname):
     #     """Пересоздание БД: удаление + создание"""
@@ -240,6 +243,14 @@ def user_init(db):
         print(username)
 
 
+def is_postgis():
+    """Использовать ли PostGIS ?"""
+    res = click.prompt(f"Добавить шаблон PostGIS в БД. Вы согласны? [(д)а/(н)ет] >> ").lower()
+    if res in ('да', 'д', 'yes', 'y'):
+        return True
+    return False
+
+
 @click.command('init-db')
 @click.option('--sql-file', '-f', default=SQL_INIT_FILE, help='название SQL-файла')
 @click.option('--dbname', '-db', default=DB_NAME, help='имя базы данных')
@@ -252,7 +263,7 @@ def db_init(sql_file, dbname):
             click.echo('Удаляем старую БД, создаем и заполняем новую')
             dbms.delete(dbname)
             user_init(dbms)
-            dbms.create(dbname)
+            dbms.create(dbname, is_postgis=is_postgis())
             sqlfile_execute(sql_file, dbname)
         else:
             click.echo('Отмена инициализации БД')
@@ -260,7 +271,7 @@ def db_init(sql_file, dbname):
     else:
         click.echo('Создаем новую БД и заполняем ее данными')
         user_init(dbms)
-        dbms.create(dbname)
+        dbms.create(dbname, is_postgis=is_postgis())
         sqlfile_execute(sql_file, dbname)
     click.echo(f"Новая БД '{dbname}' создана")
 

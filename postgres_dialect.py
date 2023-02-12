@@ -2,6 +2,8 @@
 DB_EXISTS = """SELECT 1 FROM pg_catalog.pg_database WHERE datname = '{}'"""
 # Создание БД
 CREATE_DATABASE = """CREATE DATABASE {}"""
+# Создание БД с PostGIS
+CREATE_DATABASE_POSTGIS = """CREATE DATABASE {} TEMPLATE=template_postgis"""
 # Удаление БД
 DELETE_DATABASE = """DROP DATABASE {}"""
 # Проверка сущестования пользователя

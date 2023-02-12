@@ -1,7 +1,9 @@
 # СУБД
 DBMS = 'postgres'
 # Основная БД
-DB_NAME = 'dj_estate_register'
+DB_NAME = 'dj_auction'
+# Создатель БД
+DB_OWNER = 'django_user'
 # SQL-скрипт заполнения БД
 # SQL_INIT_FILE = 'temp/estate_register.sql'
 SQL_INIT_FILE = None
@@ -23,7 +25,7 @@ ROOT_USER = {
 }
 
 CLIENT_USER = {
-    'user': 'django_user',
+    'user': DB_OWNER,
     'password': 'pswd',
 }
 
